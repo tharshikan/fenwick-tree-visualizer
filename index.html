@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fenwick Tree Visualizer</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="top">
+  <h1>Fenwick Tree Visualizer</h1>
+  <p class="sub">
+    <code>t[e]</code> stores the <code>lowbit(e)</code> elements ending at <code>e</code>.
+    A query moves left and peels off the lowest 1-bit each step. An update moves right and adds the lowest 1-bit, so the carry climbs.
+  </p>
+</header>
+
+<section class="panel controls">
+  <div class="ctl-row">
+    <label for="arr-input" class="lbl">Array a[1..n]</label>
+    <input id="arr-input" class="arr-input" spellcheck="false" value="3, 1, 4, 1, 5, 9, 2, 6">
+    <button id="arr-apply">Apply</button>
+    <select id="size" aria-label="Array size">
+      <option value="8">n = 8</option>
+      <option value="16">n = 16</option>
+      <option value="32">n = 32</option>
+    </select>
+    <button id="random">Random</button>
+    <span id="arr-msg" class="msg"></span>
+  </div>
+  <div class="ctl-row ops">
+    <button id="op-build" class="primary">Build (n × add)</button>
+    <button id="op-fast">Fast build O(n)</button>
+    <span class="op">
+      <button id="op-query" class="needs-built">sum(1..p)</button>
+      <label>p <input id="q-p" type="number" value="7" min="1"></label>
+    </span>
+    <span class="op">
+      <button id="op-update" class="needs-built">add(i, x)</button>
+      <label>i <input id="u-i" type="number" value="3" min="1"></label>
+      <label>x <input id="u-x" type="number" value="10"></label>
+    </span>
+    <span class="op">
+      <button id="op-range" class="needs-built">range(l, r)</button>
+      <label>l <input id="r-l" type="number" value="3" min="1"></label>
+      <label>r <input id="r-r" type="number" value="7" min="1"></label>
+    </span>
+  </div>
+</section>
+
+<section class="panel player" id="player">
+  <div class="pbtns">
+    <button id="p-first" title="First step (Home)" aria-label="First step">⏮</button>
+    <button id="p-prev" title="Previous step (←)" aria-label="Previous step">◀</button>
+    <button id="p-play" class="primary play" title="Play / pause (Space)" aria-label="Play or pause">▶</button>
+    <button id="p-next" title="Next step (→)" aria-label="Next step">▶︎|</button>
+    <button id="p-last" title="Last step (End)" aria-label="Last step">⏭</button>
+  </div>
+  <div class="narr">
+    <div class="narr-top"><span id="step-count" class="step-count">0 / 0</span><span id="result" class="result"></span></div>
+    <p id="narration"></p>
+  </div>
+  <label class="speed">Speed <input type="range" id="speed" min="0" max="100" value="55"></label>
+</section>
+
+<main class="layout">
+  <div class="col-main">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Chunk diagram</h2>
+        <div class="legend">
+          <span><i class="sw sw-active"></i>current</span>
+          <span><i class="sw sw-plus"></i>used / updated</span>
+          <span><i class="sw sw-minus"></i>subtracted</span>
+          <span><i class="sw sw-skip"></i>skipped</span>
+          <span><i class="sw sw-done"></i>complete</span>
+          <span><i class="sw sw-source"></i>pushed up</span>
+          <span><i class="sw sw-col"></i>contains i</span>
+        </div>
+      </div>
+      <p class="hint">Each row is one chunk <code>t[e]</code>: it ends at e and its length is the lowest set bit of e (in orange). Click an array cell to choose i for add, or a row label to choose p for sum.</p>
+      <div class="grid-scroll"><div id="grid" class="grid"></div></div>
+    </section>
+
+    <section class="panel">
+      <h2>Index walk in binary</h2>
+      <div id="trail" class="trail"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>The hidden tree</h2>
+        <div class="seg" role="tablist">
+          <button id="st-update" class="on" role="tab">Update tree</button>
+          <button id="st-query" role="tab">Query tree</button>
+        </div>
+      </div>
+      <p id="struct-cap" class="hint"></p>
+      <div id="struct" class="struct"></div>
+    </section>
+  </div>
+
+  <aside class="col-side">
+    <section class="panel">
+      <h2>Code</h2>
+      <pre id="code" class="code"></pre>
+      <div id="vars" class="vars"></div>
+    </section>
+    <section class="panel">
+      <h2>What <code>i &amp; -i</code> does</h2>
+      <div id="lowbit"></div>
+    </section>
+    <section class="panel">
+      <h2>Step log</h2>
+      <ol id="log" class="log"></ol>
+    </section>
+  </aside>
+</main>
+
+<section class="panel perf">
+  <h2>Why it's fast</h2>
+  <div class="perf-grid">
+    <div class="card">
+      <h3>Last operation: cells touched</h3>
+      <div id="counters"></div>
+    </div>
+    <div class="card">
+      <div class="panel-head">
+        <h3>Worst-case cost of one operation</h3>
+        <div class="seg">
+          <button id="ch-log" class="on">log scale</button>
+          <button id="ch-lin">linear</button>
+        </div>
+      </div>
+      <div id="chart" class="chart"></div>
+    </div>
+    <div class="card">
+      <h3>Workload estimator</h3>
+      <div class="wl-inputs">
+        <label>n <input id="wl-n" type="number" value="100000" min="1"></label>
+        <label>queries <input id="wl-q" type="number" value="100000" min="0"></label>
+        <label>updates <input id="wl-u" type="number" value="100000" min="0"></label>
+      </div>
+      <div id="workload"></div>
+      <p class="hint">Worst case, at roughly 10<sup>8</sup> simple operations per second.</p>
+    </div>
+    <div class="card">
+      <h3>The trade-off</h3>
+      <table class="cx">
+        <thead><tr><th></th><th>update</th><th>prefix query</th></tr></thead>
+        <tbody>
+          <tr><td>Plain array</td><td class="good">O(1)</td><td class="bad">O(n)</td></tr>
+          <tr><td>Prefix-sum array</td><td class="bad">O(n)</td><td class="good">O(1)</td></tr>
+          <tr class="bitrow"><td>Fenwick tree</td><td class="good">O(log n)</td><td class="good">O(log n)</td></tr>
+        </tbody>
+      </table>
+      <p class="hint">The other two structures each have one O(n) operation, so a mix of queries and updates costs them O(n) per operation. Fenwick has no slow operation. Both of its loops run once per bit of the index.</p>
+    </div>
+  </div>
+</section>
+
+<script src="bit.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
