@@ -2,6 +2,8 @@
 
 An interactive, step-by-step visualizer for the Fenwick tree (Binary Indexed Tree). It has no dependencies and no build step.
 
+**Live demo:** https://tharshikan.github.io/fenwick-tree-visualizer/
+
 ## Run
 
 Open `index.html` in a browser, or serve the folder:
