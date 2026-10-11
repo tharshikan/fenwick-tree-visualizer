@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Base-10 Fenwick Lab</title>
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="base10.css">
+</head>
+<body>
+
+<header class="top">
+  <a class="backlink" href="index.html">← Binary Fenwick visualizer</a>
+  <h1>Base-10 Fenwick Lab</h1>
+  <p class="sub">
+    In base 10 a digit can be 0–9, so you may need up to 9 pieces per digit. That cost has to land somewhere.
+    <b>Version A</b> uses fixed coin sizes (1, 10, 100) and puts the cost on queries.
+    <b>Version B</b> lets one chunk cover the whole last digit group and puts the cost on updates.
+    Switch between them on the same array to see the trade-off.
+  </p>
+</header>
+
+<section class="panel controls">
+  <div class="ctl-row">
+    <span class="lbl">Version</span>
+    <div class="seg big" role="tablist" aria-label="Version">
+      <button id="v-A" role="tab">A · power-of-b chunks</button>
+      <button id="v-B" role="tab" class="on">B · whole last digit</button>
+    </div>
+    <label class="lbl" for="base">Base</label>
+    <select id="base">
+      <option value="10" selected>10</option>
+      <option value="4">4</option>
+      <option value="3">3</option>
+      <option value="2">2</option>
+    </select>
+    <label class="lbl" for="size">n</label>
+    <select id="size">
+      <option value="20">20</option>
+      <option value="40" selected>40</option>
+      <option value="100">100</option>
+    </select>
+    <button id="random">New random array</button>
+  </div>
+  <div class="ctl-row ops">
+    <button id="op-build" class="primary">Animate build</button>
+    <span class="op">
+      <button id="op-query">sum(1..q)</button>
+      <label>q <input id="q-q" type="number" value="37" min="1"></label>
+    </span>
+    <span class="op">
+      <button id="op-update">add(j, x)</button>
+      <label>j <input id="u-j" type="number" value="31" min="1"></label>
+      <label>x <input id="u-x" type="number" value="5"></label>
+    </span>
+    <span class="op presets">
+      <span class="muted">From the notes:</span>
+      <button class="chip-btn" data-preset="A:q:13">A · sum(1..13)</button>
+      <button class="chip-btn" data-preset="B:q:37">B · sum(1..37)</button>
+      <button class="chip-btn" data-preset="A:u:31">A · add at 31</button>
+      <button class="chip-btn" data-preset="B:u:31">B · add at 31</button>
+    </span>
+  </div>
+</section>
+
+<section class="panel player" id="player">
+  <div class="pbtns">
+    <button id="p-first" title="First step (Home)" aria-label="First step">⏮</button>
+    <button id="p-prev" title="Previous step (←)" aria-label="Previous step">◀</button>
+    <button id="p-play" class="primary play" title="Play / pause (Space)" aria-label="Play or pause">▶</button>
+    <button id="p-next" title="Next step (→)" aria-label="Next step">▶︎|</button>
+    <button id="p-last" title="Last step (End)" aria-label="Last step">⏭</button>
+  </div>
+  <div class="narr">
+    <div class="narr-top"><span id="step-count" class="step-count"></span><span id="mode-pill" class="mode-pill"></span><span id="result" class="result"></span></div>
+    <p id="narration"></p>
+  </div>
+  <label class="speed">Speed <input type="range" id="speed" min="0" max="100" value="60"></label>
+</section>
+
+<main class="layout">
+  <div class="col-main">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Chunk diagram</h2>
+        <div class="legend">
+          <span><i class="sw sw-active"></i>current</span>
+          <span><i class="sw sw-plus"></i>read / written</span>
+          <span><i class="sw sw-skip"></i>skipped</span>
+          <span><i class="sw sw-done"></i>built</span>
+          <span><i class="sw sw-col"></i>contains j</span>
+        </div>
+      </div>
+      <p class="hint" id="grid-hint"></p>
+      <div class="grid-scroll tall" id="grid-scroll"><div id="grid" class="grid"></div></div>
+    </section>
+
+    <section class="panel">
+      <h2>Index walk in base <span id="walk-base">10</span></h2>
+      <div id="trail" class="trail"></div>
+    </section>
+  </div>
+
+  <aside class="col-side">
+    <section class="panel">
+      <h2>Coins vs bills</h2>
+      <div id="pieces"></div>
+    </section>
+    <section class="panel">
+      <h2>Code</h2>
+      <pre id="code" class="code"></pre>
+      <div id="vars" class="vars"></div>
+    </section>
+    <section class="panel">
+      <h2>Step log</h2>
+      <ol id="log" class="log"></ol>
+    </section>
+  </aside>
+</main>
+
+<section class="panel perf">
+  <h2>The trade-off</h2>
+  <div class="perf-grid">
+    <div class="card">
+      <h3>Worst case on this array (exact, n = <span id="ww-n"></span>)</h3>
+      <div id="worst"></div>
+    </div>
+    <div class="card">
+      <h3>Why base 2 wins: (b − 1) · log<sub>b</sub> n</h3>
+      <div class="wl-inputs">
+        <label>n <input id="tb-n" type="number" value="100000" min="2" max="300000"></label>
+      </div>
+      <div class="tbl-scroll"><table class="cx bt-table" id="btable"></table></div>
+      <p class="hint">Exact worst cases, computed over every position 1..n. A larger base means fewer digits, but each digit can need up to b − 1 pieces, and that factor grows faster than the digit count shrinks. Base 2 is the only base where b − 1 = 1, so both columns match.</p>
+    </div>
+    <div class="card wide">
+      <div>
+        <h3>The hardware reason</h3>
+        <p class="prose">Even with equal step counts, binary would still be faster. Finding the lowest set bit is <code>i &amp; -i</code>, one or two instructions. Finding the lowest nonzero decimal digit takes the <code>while (i % 10 == 0)</code> loop in the code panel, and integer division is among the slowest things a CPU does.</p>
+      </div>
+      <div>
+        <h3>Where a wide base wins</h3>
+        <p class="prose">A B-tree is like base 200. On disk, loading a node is the expensive part and scanning 200 keys inside it is nearly free, so fewer levels win. A BIT counts every memory read about equally, so base 2 wins there.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="bit.js"></script>
+<script src="base10.js"></script>
+<script src="base10-app.js"></script>
+</body>
+</html>

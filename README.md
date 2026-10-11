@@ -4,6 +4,8 @@ An interactive, step-by-step visualizer for the Fenwick tree (Binary Indexed Tre
 
 **Live demo:** https://tharshikan.github.io/fenwick-tree-visualizer/
 
+**Base-10 lab:** https://tharshikan.github.io/fenwick-tree-visualizer/base10.html. The same idea in base 10 (and 3, 4, 2), with two versions: Version A uses power-of-b chunks, which makes queries expensive, and Version B uses the whole last digit group, which makes updates expensive. It shows why base 2 is the sweet spot.
+
 ## Run
 
 Open `index.html` in a browser, or serve the folder:
@@ -49,3 +51,4 @@ Step forward and back with ◀ / ▶ (or the ← / → keys). Space plays and pa
 - `bit.js`: pure Fenwick logic and the frame generators (it can also be `require`d from Node)
 - `app.js`: rendering, playback, and the controls
 - `styles.css`: the theme (follows the system light or dark setting)
+- `base10.html`, `base10.js`, `base10-app.js`, `base10.css`: the base-b lab page (it reuses `styles.css` and `bit.js`)

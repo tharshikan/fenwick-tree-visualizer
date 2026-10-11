@@ -1,0 +1,80 @@
+/* Extra styles for base10.html. Shared tokens and components come from styles.css. */
+
+.backlink { display: inline-block; margin-bottom: 6px; color: var(--active); text-decoration: none; font-size: 13px; }
+.backlink:hover { text-decoration: underline; }
+
+.seg.big button { padding: 5px 12px; font-size: 13px; }
+.presets { flex-wrap: wrap; }
+.chip-btn { font-size: 12px; padding: 3px 9px; border-radius: 999px; }
+
+.mode-pill {
+  font-family: var(--mono); font-size: 11.5px; font-weight: 600;
+  padding: 1px 8px; border-radius: 999px;
+  background: var(--btn); color: var(--muted);
+}
+
+/* tall grid: scrolls vertically inside its own box, header rows stay visible */
+.grid-scroll.tall { max-height: 640px; overflow: auto; }
+.g-sticky {
+  position: sticky; top: 0; z-index: 3;
+  background: var(--panel);
+  display: flex; flex-direction: column; gap: 2px;
+  padding-bottom: 2px;
+}
+.g-label .pad { opacity: 0.35; }
+.g-label .grp { color: var(--low); font-weight: 700; }
+.grid.compact .t-row { height: 15px; }
+.grid.compact .g-bar { margin: 1px 0; border-radius: 3px; font-size: 9.5px; padding: 0 3px; }
+.grid.compact .t-row .g-label { font-size: 10.5px; }
+.grid.compact .g-arr { height: 28px; }
+.grid.compact .g-arr .g-cell { font-size: 10px; }
+.grid.compact .g-head .g-cell { font-size: 9px; }
+.grid.mid .t-row { height: 20px; }
+.grid.mid .g-bar { margin: 2px 1px; font-size: 10.5px; }
+
+/* coins vs bills */
+.pc-num { font-family: var(--mono); font-size: 13px; margin: 0 0 10px; }
+.pc-num b { color: var(--low); }
+.pc-block { margin-bottom: 12px; padding: 8px 10px; border: 1px solid var(--border); border-radius: 8px; }
+.pc-block.cur { border-color: var(--active); box-shadow: 0 0 0 2px var(--active-ring); }
+.pc-head { display: flex; justify-content: space-between; gap: 8px; font-size: 12.5px; margin-bottom: 6px; }
+.pc-head .cnt { font-family: var(--mono); font-weight: 700; }
+.pc-head .cnt.hi { color: var(--minus); }
+.pc-head .cnt.lo { color: var(--plus); }
+.pc-bar { display: flex; gap: 2px; height: 24px; }
+.pc-bar span {
+  min-width: 3px; border-radius: 4px;
+  background: var(--bar); color: var(--bar-text);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 10.5px; overflow: hidden; white-space: nowrap;
+}
+.pc-block.cur .pc-bar span { background: var(--done); color: #fff; }
+.pc-levels { display: flex; flex-direction: column; gap: 4px; font-size: 12px; }
+.pc-lvl { display: grid; grid-template-columns: 74px minmax(0, 1fr); gap: 6px; align-items: start; }
+.pc-lvl .nm { color: var(--muted); font-family: var(--mono); font-size: 11px; padding-top: 2px; }
+.pc-lvl .ix { display: flex; flex-wrap: wrap; gap: 3px; }
+.pc-lvl .ix i {
+  font-style: normal; font-family: var(--mono); font-size: 10.5px;
+  padding: 1px 5px; border-radius: 4px; background: var(--bar); color: var(--bar-text);
+}
+.pc-block.cur .pc-lvl .ix i { background: var(--done); color: #fff; }
+.pc-note { font-size: 12px; color: var(--muted); margin: 4px 0 0; }
+
+/* trade-off panel */
+.ww-grid { display: grid; grid-template-columns: 104px minmax(0, 1fr) minmax(0, 1fr); gap: 6px 10px; align-items: center; font-size: 12.5px; }
+.ww-grid .hd { color: var(--muted); font-size: 11.5px; font-weight: 600; }
+.ww-cell { display: grid; grid-template-columns: minmax(0, 1fr) 34px; gap: 6px; align-items: center; }
+.ww-cell .bt { height: 10px; background: var(--bg); border-radius: 5px; overflow: hidden; }
+.ww-cell .bf { display: block; height: 100%; border-radius: 5px; background: var(--plus); transition: width 0.4s; }
+.ww-cell.bad .bf { background: var(--minus); }
+.ww-cell .bv { font-family: var(--mono); font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; }
+.ww-grid .cur-row { font-weight: 700; }
+.tbl-scroll { overflow-x: auto; }
+.bt-table td, .bt-table th { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bt-table td.num { font-family: var(--mono); text-align: right; }
+.bt-table td.num.bad { color: var(--minus); font-weight: 700; }
+.bt-table tr.two td { background: var(--range); }
+.bt-table tr.two td:first-child { font-weight: 700; }
+.prose { margin: 0 0 12px; font-size: 13px; max-width: 65ch; }
+.card.wide { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 4px 24px; }
+.narr-top { flex-wrap: wrap; }
